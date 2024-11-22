@@ -1,0 +1,419 @@
+import pandas as pd
+file_path = r'C:\Users\ASUS\OneDrive\Documents\laptop_prices.csv'
+df = pd.read_csv(file_path)
+print("First 5 rows of the dataset:")
+print(df.head())
+print("\nLast 5 rows of the dataset:")
+print(df.tail())
+# Import necessary libraries
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+import seaborn as sns
+file_path = r'C:\Users\ASUS\OneDrive\Documents\laptop_prices.csv'
+df = pd.read_csv(file_path)
+le_company = LabelEncoder()
+le_typename = LabelEncoder()
+df['Company'] = le_company.fit_transform(df['Company'])
+df['TypeName'] = le_typename.fit_transform(df['TypeName'])
+features = df[['Company', 'TypeName', 'Ram']]
+kmeans = KMeans(n_clusters=3, random_state=42)  # Clustering into 3 groups
+df['Cluster'] = kmeans.fit_predict(features)
+company_cluster_counts = df.groupby(['Cluster', 'Company']).size().unstack(fill_value=0)
+company_names = le_company.inverse_transform(company_cluster_counts.columns)
+company_cluster_counts.columns = company_names  # Assign company names to columns
+cluster_names = {0: 'Low-end Laptops', 1: 'Mid-range Laptops', 2: 'High-end Laptops'}
+df['Cluster'] = df['Cluster'].map(cluster_names)
+for cluster_num, cluster_name in cluster_names.items():
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x=company_names, y=company_cluster_counts.loc[cluster_num].values)
+    plt.title(f'Distribution of Companies in {cluster_name}')
+    plt.xlabel('Company')
+    plt.ylabel('Count')
+    plt.xticks(rotation=45)  # Rotate the x labels for better readability
+    plt.show()
+import pandas as pd
+file_path =  "D:\\internship\\laptop_prices.xlsx"  # Replace with the actual file path
+laptop_data = pd.read_excel(file_path)
+laptop_data['TotalStorage'] = laptop_data['PrimaryStorage'] + laptop_data['SecondaryStorage']
+high_storage_laptops = laptop_data[laptop_data['TotalStorage'] == laptop_data['TotalStorage'].max()]
+high_storage_count = high_storage_laptops.shape[0]
+high_storage_details = high_storage_laptops[['Company', 'Product', 'TotalStorage', 'PrimaryStorage', 'SecondaryStorage', 'Price_rs']]
+print(f"\nNumber of laptops with the highest storage: {high_storage_count}")
+print("Details of laptops with the highest storage:")
+print(high_storage_details)
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+file_path = "D:\\internship\\laptop_prices.xlsx"   
+laptop_data = pd.read_excel(file_path)
+laptop_data['TotalStorage'] = laptop_data['PrimaryStorage'] + laptop_data['SecondaryStorage']
+primary_storage_counts = laptop_data['PrimaryStorageType'].value_counts()
+secondary_storage_counts = laptop_data['SecondaryStorageType'].value_counts()
+plt.figure(figsize=(8, 2))
+sns.barplot(x=primary_storage_counts.index, y=primary_storage_counts.values, palette='viridis')
+plt.title('Distribution of Primary Storage Types')
+plt.xlabel('Primary Storage Type')
+plt.ylabel('Number of Laptops')
+plt.show()
+plt.figure(figsize=(8, 2))
+sns.barplot(x=secondary_storage_counts.index, y=secondary_storage_counts.values, palette='coolwarm')
+plt.title('Distribution of Secondary Storage Types')
+plt.xlabel('Secondary Storage Type')
+plt.ylabel('Number of Laptops')
+plt.show()
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+import seaborn as sns
+file_path = "D:\\internship\\laptop_prices.xlsx"
+df = pd.read_excel(file_path)
+le_company = LabelEncoder()
+le_typename = LabelEncoder()
+df['Company'] = le_company.fit_transform(df['Company'])
+df['TypeName'] = le_typename.fit_transform(df['TypeName'])
+features = df[['Company', 'TypeName', 'Ram']]
+kmeans = KMeans(n_clusters=3, random_state=42) 
+df['Cluster'] = kmeans.fit_predict(features)
+company_cluster_counts = df.groupby(['Cluster', 'Company']).size().unstack(fill_value=0)
+company_names = le_company.inverse_transform(company_cluster_counts.columns)
+company_cluster_counts.columns = company_names  # Assign company names to columns
+cluster_names = {0: 'Low-end Laptops', 1: 'Mid-range Laptops', 2: 'High-end Laptops'}
+df['Cluster'] = df['Cluster'].map(cluster_names)
+for cluster_num, cluster_name in enumerate(cluster_names.values()):
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x=company_names, y=company_cluster_counts.loc[cluster_num].values)
+    plt.title(f'Distribution of Companies in {cluster_name}')
+    plt.xlabel('Company')
+    plt.ylabel('Count')
+    plt.xticks(rotation=45)
+    plt.show()
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+file_path = "D:\\internship\\laptop_prices.xlsx"   # Replace with your actual file path
+laptop_data = pd.read_excel(file_path)
+ram_frequencies = laptop_data['Ram'].value_counts().reset_index()
+ram_frequencies.columns = ['Ram', 'Frequency']
+plt.figure(figsize=(8, 4))
+sns.scatterplot(data=ram_frequencies, x='Ram', y='Frequency', s=100, color='blue', marker='o')
+plt.title('Scatter Plot of RAM Frequencies', fontsize=16)
+plt.xlabel('RAM (GB)', fontsize=12)
+plt.ylabel('Frequency', fontsize=12)
+plt.xticks(ticks=ram_frequencies['Ram'], fontsize=10)
+plt.yticks(fontsize=10)
+plt.grid(True, linestyle='--', alpha=0.7)
+plt.show()
+plt.figure(figsize=(8, 4))
+plt.pie(
+    ram_frequencies['Frequency'],
+    labels=ram_frequencies['Ram'],
+    autopct='%1.1f%%',
+    startangle=140,
+    colors=plt.cm.tab10.colors
+)
+plt.title('RAM Distribution by Frequency', fontsize=16)
+plt.show()
+import pandas as pd
+import matplotlib.pyplot as plt
+file_path ="D:\\internship\\laptop_prices.xlsx" 
+data = pd.read_excel(file_path, sheet_name='laptop_prices')
+screen_stats = data['Screen'].value_counts()
+plt.figure(figsize=(10, 6))
+screen_stats.plot(kind='bar', color='skyblue', edgecolor='black')
+plt.title('Distribution of Screen Types')
+plt.xlabel('Screen Type')
+plt.ylabel('Number of Laptops')
+plt.xticks(rotation=45)
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.show()
+import pandas as pd
+file_path =="D:\\internship\\laptop_prices.xlsx" 
+data = pd.read_excel(file_path, sheet_name='laptop_prices')
+touch_screen_laptops = data[data['Screen'].str.contains('Touch', case=False, na=False)]
+num_touch_screen = touch_screen_laptops.shape[0]
+print(f"Number of touch-screen laptops: {num_touch_screen}")
+import pandas as pd
+import matplotlib.pyplot as plt
+file_path = "D:\\internship\\laptop_prices.xlsx" 
+data = pd.read_excel(file_path, sheet_name='laptop_prices')
+os_counts = data['OS'].value_counts()
+print("Number of laptops per OS:")
+print(os_counts)
+plt.figure(figsize=(10, 6))
+os_counts.plot(kind='bar', color='Skyblue', edgecolor='black')
+plt.title('Number of Laptops per Operating System')
+plt.xlabel('Operating System')
+plt.ylabel('Number of Laptops')
+plt.xticks(rotation=45)
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.show()
+import pandas as pd
+file_path = "D:\\internship\\laptop_prices.xlsx" 
+data = pd.read_excel(file_path, sheet_name='laptop_prices')
+unique_companies = data['Company'].nunique()
+company_counts = data['Company'].value_counts()
+print(f"Number of unique companies: {unique_companies}")
+print("\nNumber of laptops per company:")
+print(company_counts)
+import pandas as pd
+import matplotlib.pyplot as plt
+file_path = "D:\\internship\\laptop_prices.xlsx" 
+data = pd.read_excel(file_path, sheet_name='laptop_prices')
+highest_inches = data['Inches'].max()
+average_inches = data['Inches'].mean()
+lowest_inches = data['Inches'].min()
+most_common_inches = data['Inches'].mode()[0]
+plt.figure(figsize=(8, 6))
+plt.boxplot(data['Inches'], vert=False, patch_artist=True, boxprops=dict(facecolor='lightblue'))
+plt.scatter([lowest_inches, average_inches, highest_inches, most_common_inches], [1, 1, 1, 1],
+            color=['red', 'green', 'orange', 'purple'], label=['Lowest', 'Average', 'Highest', 'Most Common'])
+plt.title('Distribution of Laptop Screen Sizes')
+plt.xlabel('Inches')
+plt.yticks([])
+plt.legend()
+plt.grid(axis='x', linestyle='--', alpha=0.7)
+plt.show()
+plt.figure(figsize=(10, 6))
+plt.scatter(data.index, data['Inches'], alpha=0.7, color='skyblue', label='Laptop Screen Sizes')
+plt.axhline(y=highest_inches, color='red', linestyle='--', label=f'Highest: {highest_inches}"')
+plt.axhline(y=average_inches, color='green', linestyle='--', label=f'Average: {average_inches:.2f}"')
+plt.axhline(y=lowest_inches, color='orange', linestyle='--', label=f'Lowest: {lowest_inches}"')
+plt.axhline(y=most_common_inches, color='purple', linestyle='--', label=f'Most Common: {most_common_inches}"')
+plt.title('Scatter Plot of Laptop Screen Sizes')
+plt.xlabel('Laptop Index')
+plt.ylabel('Inches')
+plt.legend()
+plt.grid()
+plt.show()
+# Check for IPS keyword in the 'Screen' column
+ips_laptops = data[data['Screen'].str.contains('IPS', case=False, na=False)]
+num_ips = ips_laptops.shape[0]
+num_non_ips = data.shape[0] - num_ips
+# Display the results
+print(f"Laptops with IPS screens: {num_ips}")
+print(f"Laptops without IPS screens: {num_non_ips}")
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+file_path = r"D:\internship\laptop_prices.xlsx"
+laptop_data = pd.read_excel(file_path)
+storage_type_counts = laptop_data['PrimaryStorageType'].value_counts()
+storage_type_prices = laptop_data.groupby('PrimaryStorageType')['Price_rs'].mean()
+plt.figure(figsize=(10, 6))
+sns.barplot(x=storage_type_counts.index, y=storage_type_counts.values, palette='muted')
+plt.title('Distribution of Primary Storage Types')
+plt.xlabel('Primary Storage Type')
+plt.ylabel('Count')
+plt.xticks(rotation=45)
+plt.show()
+plt.figure(figsize=(10, 6))
+sns.barplot(x=storage_type_prices.index, y=storage_type_prices.values, palette='viridis')
+plt.title('Average Price by Primary Storage Type')
+plt.xlabel('Primary Storage Type')
+plt.ylabel('Average Price (Rs)')
+plt.xticks(rotation=45)
+plt.show()
+import pandas as pd
+file_path = r"D:\internship\laptop_prices.xlsx"  
+laptop_data = pd.read_excel(file_path)
+unique_cpu_companies = laptop_data['CPU_company'].unique()
+cpu_company_count = len(unique_cpu_companies)
+print("Number of unique CPU companies:", cpu_company_count)
+print("CPU company names:", unique_cpu_companies)
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+file_path = r"D:\internship\laptop_prices.xlsx"   # Adjust if running locally
+laptop_data = pd.read_excel(file_path)
+gpu_model_counts = laptop_data['GPU_model'].value_counts()
+most_common_gpu = gpu_model_counts.idxmax()
+most_common_gpu_count = gpu_model_counts.max()
+print("GPU models and their counts:")
+print(gpu_model_counts)
+print(f"\nMost commonly used GPU model: {most_common_gpu} ({most_common_gpu_count} occurrences)")
+plt.figure(figsize=(12, 8))
+sns.barplot(x=gpu_model_counts.index[:10], y=gpu_model_counts.values[:10],palette='muted')  # Top 10 for better readability
+plt.title('Top 10 Most Common GPU Models')
+plt.xlabel('GPU Model')
+plt.ylabel('Count')
+plt.xticks(rotation=45)
+plt.show()
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.preprocessing import LabelEncoder
+file_path = r"D:\internship\laptop_prices.xlsx" 
+laptop_data = pd.read_excel(file_path)
+label_encoder = LabelEncoder()
+laptop_data['GPU_model_encoded'] = label_encoder.fit_transform(laptop_data['GPU_model'])
+plt.figure(figsize=(12, 8))
+sns.scatterplot(data=laptop_data, x='GPU_model_encoded', y='Price_rs', hue='GPU_model', palette='coolwarm', alpha=0.7)
+plt.title('Scatter Plot: GPU Models vs. Price')
+plt.xlabel('GPU Model (Encoded)')
+plt.ylabel('Price (Rs)')
+plt.legend(title='GPU Models', bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.show()
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+file_path = r"D:\internship\laptop_prices.xlsx" 
+laptop_data = pd.read_excel(file_path)
+cpu_companies = laptop_data['CPU_company'].unique()
+cpu_company_count = len(cpu_companies)
+label_encoder = LabelEncoder()
+laptop_data['CPU_company_encoded'] = label_encoder.fit_transform(laptop_data['CPU_company'])
+print(f"Number of unique CPU companies: {cpu_company_count}")
+print("CPU company names:", cpu_companies)
+print("\nEncoded CPU companies:")
+print(laptop_data[['CPU_company', 'CPU_company_encoded']].drop_duplicates())
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+file_path = r"D:\internship\laptop_prices.xlsx"  # Adjust the path to your local file
+laptop_data = pd.read_excel(file_path)
+avg_price_by_gpu = laptop_data.groupby('GPU_company')['Price_rs'].mean()
+plt.figure(figsize=(10, 6))
+avg_price_by_gpu.plot(kind='bar', color='Skyblue', edgecolor='black')
+plt.title('Average Price by GPU Company', fontsize=16)
+plt.xlabel('GPU Company', fontsize=12)
+plt.ylabel('Average Price (Rs)', fontsize=12)
+plt.xticks(rotation=45)
+plt.show()
+encoder = LabelEncoder()
+laptop_data['GPU_encoded'] = encoder.fit_transform(laptop_data['GPU_company'])
+scaler = MinMaxScaler()
+laptop_data['Price_normalized'] = scaler.fit_transform(laptop_data[['Price_rs']])
+X = laptop_data[['GPU_encoded', 'Price_normalized']]
+kmeans = KMeans(n_clusters=3, random_state=42)
+laptop_data['Cluster'] = kmeans.fit_predict(X)
+plt.figure(figsize=(10, 6))
+sns.scatterplot(
+    x=laptop_data['GPU_encoded'],
+    y=laptop_data['Price_normalized'],
+    hue=laptop_data['Cluster'],
+    palette='Set2',
+    s=100
+)
+plt.title('Clustering of Laptops by GPU and Price', fontsize=16)
+plt.xlabel('GPU Company (Encoded)', fontsize=12)
+plt.ylabel('Normalized Price', fontsize=12)
+plt.legend(title='Cluster')
+plt.show()
+import pandas as pd
+import matplotlib.pyplot as plt
+url = "D:\internship\laptop_prices csv.csv"
+data = pd.read_csv(url)
+ips_counts = data['IPSpanel'].value_counts()
+plt.figure(figsize=(8, 8))
+plt.pie(ips_counts, labels=ips_counts.index, autopct='%1.1f%%', startangle=140, colors=['#90EE90','#ADD8E6'])
+plt.title('Distribution of IPS Panels in Laptops', fontsize=16)
+plt.axis('equal') 
+plt.show()
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+file_path = r"D:\internship\laptop_prices.xlsx"
+laptop_data = pd.read_excel(file_path, sheet_name='laptop_prices')
+def normalize(series):
+    return (series - series.min()) / (series.max() - series.min())
+laptop_data['Score'] = (
+    normalize(laptop_data['Ram']) * 0.3 +                  # Higher RAM
+    normalize(laptop_data['CPU_freq']) * 0.3 +             # Higher CPU frequency
+    normalize(laptop_data['PrimaryStorage']) * 0.2 +       # Larger primary storage
+    normalize(laptop_data['Weight']) * -0.1 +              # Lower weight
+    normalize(laptop_data['Price_rs']) * -0.1              # Lower price
+)
+top_laptops = laptop_data.nlargest(5, 'Score')# Sort by score and select the top 5 laptop
+plt.figure(figsize=(12, 6))
+x = np.arange(len(top_laptops))
+plt.bar(x, top_laptops['Score'], color='Skyblue', alpha=0.8, label='Performance Score')
+plt.xticks(x, top_laptops['Product'], rotation=45, ha='right')
+plt.xlabel('Laptop Model')
+plt.ylabel('Performance Score')
+plt.title('Top 5 High-Performance Laptops')
+plt.legend()
+plt.tight_layout()
+# Show the plot
+plt.show()
+# Displaying the details of the top laptops
+print(top_laptops[['Company', 'Product', 'Ram', 'CPU_freq', 'PrimaryStorage',
+                   'PrimaryStorageType', 'Weight', 'Price_rs', 'Score']])
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import r2_score, mean_absolute_error
+import matplotlib.pyplot as plt
+import seaborn as sns
+file_path = r"D:\internship\laptop_prices.xlsx"
+laptop_data = pd.read_excel(file_path, sheet_name='laptop_prices')
+features = ['Ram', 'CPU_freq', 'PrimaryStorage', 'Weight']
+target = 'Price_rs'
+data = laptop_data[features + [target]].dropna()
+X = data[features]
+y = data[target]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = RandomForestRegressor(random_state=42, n_estimators=100)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+r2 = r2_score(y_test, y_pred)
+mae = mean_absolute_error(y_test, y_pred)
+print(f'R² Score: {r2:.2f}')
+print(f'Mean Absolute Error: {mae:.2f}')
+plt.figure(figsize=(10, 6))
+sns.scatterplot(x=y_test, y=y_pred, alpha=0.7, color='blue')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], '--', color='red')
+plt.title('Actual vs Predicted Prices')
+plt.xlabel('Actual Prices')
+plt.ylabel('Predicted Prices')
+plt.tight_layout()
+plt.show()
+importances = model.feature_importances_
+plt.figure(figsize=(8, 6))
+sns.barplot(x=importances, y=features, palette='viridis')
+plt.title('Feature Importance')
+plt.xlabel('Importance')
+plt.ylabel('Feature')
+plt.tight_layout()
+plt.show()
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.preprocessing import LabelEncoder
+file_path =  r"D:\internship\laptop_prices.xlsx"
+laptop_data = pd.read_excel(file_path, sheet_name='laptop_prices')
+plt.figure(figsize=(8, 8))
+type_counts.plot.pie(autopct='%1.1f%%', startangle=140, colors=sns.color_palette('pastel'))
+plt.title('Laptop Type Distribution')
+plt.ylabel('')  # Remove default ylabel
+plt.tight_layout()
+plt.show()
+label_encoder = LabelEncoder()
+laptop_data['TypeName_Encoded'] = label_encoder.fit_transform(laptop_data['TypeName'])
+features = ['Ram', 'CPU_freq', 'PrimaryStorage', 'Weight']
+target = 'TypeName_Encoded'
+data = laptop_data[features + [target]].dropna()
+X = data[features]
+y = data[target]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+classifier = RandomForestClassifier(random_state=42, n_estimators=100)
+classifier.fit(X_train, y_train)
+y_pred = classifier.predict(X_test)
+print('Classification Report:')
+print(classification_report(y_test, y_pred))
+conf_matrix = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(8, 6))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=label_encoder.classes_, yticklabels=label_encoder.classes_)
+plt.title('Confusion Matrix for TypeName Prediction')
+plt.xlabel('Predicted Type')
+plt.ylabel('Actual Type')
+plt.tight_layout()
+plt.show()
+
+
